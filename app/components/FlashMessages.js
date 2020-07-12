@@ -1,17 +1,11 @@
-import React, { useContext } from "react"
-import { ExampleContext } from "./ExampleContext"
+import React, { useEffect } from "react"
 
-function FlashMessages() {
-  const FlashMessages = useContext(ExampleContext).FlashMessage
-
+function FlashMessages(props) {
   return (
     <div className="floating-alerts">
-      {FlashMessages.map((msg, index) => {
+      {props.messages.map((msg, index) => {
         return (
-          <div
-            key={index}
-            className="alert alert-success text-center floating-alert shadow-sm"
-          >
+          <div key={index} className="alert alert-success text-center floating-alert shadow-sm">
             {msg}
           </div>
         )

@@ -1,0 +1,566 @@
+warning: LF will be replaced by CRLF in app/components/FlashMessages.js.
+The file will have its original line endings in your working directory
+warning: LF will be replaced by CRLF in app/components/Header.js.
+The file will have its original line endings in your working directory
+[1mdiff --git a/app/Main.js b/app/Main.js[m
+[1mindex dbebb57..a6a5e96 100644[m
+[1m--- a/app/Main.js[m
+[1m+++ b/app/Main.js[m
+[36m@@ -1,54 +1,82 @@[m
+[31m-import React, { useContext } from "react"[m
+[32m+[m[32mimport React, { useState, useReducer } from "react"[m
+ import ReactDOM from "react-dom"[m
+[32m+[m[32mimport { BrowserRouter, Switch, Route } from "react-router-dom"[m
+[32m+[m[32mimport Axios from "axios"[m
+[32m+[m[32mAxios.defaults.baseURL = "http://localhost:8080"[m
+[32m+[m
+[32m+[m[32m// My Components[m
+ import Header from "./components/Header"[m
+ import HomeGuest from "./components/HomeGuest"[m
+[32m+[m[32mimport Home from "./components/Home"[m
+ import Footer from "./components/Footer"[m
+ import About from "./components/About"[m
+ import Terms from "./components/Terms"[m
+[31m-import Home from "./components/Home"[m
+ import CreatePost from "./components/CreatePost"[m
+[31m-import FlashMessage from "./components/FlashMessages"[m
+ import ViewSinglePost from "./components/ViewSinglePost"[m
+[31m-import ExampleContextProvider, {[m
+[31m-  ExampleContext[m
+[31m-} from "./components/ExampleContext"[m
+[31m-import { BrowserRouter, Switch, Route } from "react-router-dom"[m
+[31m-import Axios from "axios"[m
+[31m-Axios.defaults.baseURL = "http://localhost:8080"[m
+[32m+[m[32mimport FlashMessages from "./components/FlashMessages"[m
+[32m+[m[32mimport ExampleContext from "./../ExampleContext"[m
+[32m+[m
+ function Main() {[m
+[31m-  const { isLogin } = useContext(ExampleContext)[m
+[32m+[m[32m  const initialState = {[m
+[32m+[m[32m    loggedIn: Boolean(localStorage.getItem("complexappToken")),[m
+[32m+[m[32m    flashMessages: [][m
+[32m+[m[32m  }[m
+[32m+[m
+[32m+[m[32m  function ourReducer(state, action) {[m
+[32m+[m[32m    switch (action.type) {[m
+[32m+[m[32m      case "login":[m
+[32m+[m[32m        return { loggedIn: true, flashMessages: state.flashMessages }[m
+[32m+[m[32m      case "logout":[m
+[32m+[m[32m        return { loggedIn: false, flashMessages: state.flashMessages }[m
+[32m+[m[32m      case "flashMessage":[m
+[32m+[m[32m        return {[m
+[32m+[m[32m          loggedIn: state.loggedIn,[m
+[32m+[m[32m          flashMessages: state.flashMessages.concat(action.value)[m
+[32m+[m[32m        }[m
+[32m+[m[32m    }[m
+[32m+[m[32m  }[m
+[32m+[m
+[32m+[m[32m  const [state, dispatch] = useReducer(ourReducer, initialState)[m
+[32m+[m
+[32m+[m[32m  const [loggedIn, setLoggedIn] = useState([m
+[32m+[m[32m    Boolean(localStorage.getItem("complexappToken"))[m
+[32m+[m[32m  )[m
+[32m+[m[32m  const [flashMessages, setFlashMessages] = useState([])[m
+[32m+[m
+[32m+[m[32m  function addFlashMessage(msg) {[m
+[32m+[m[32m    setFlashMessages(prev => prev.concat(msg))[m
+[32m+[m[32m  }[m
+[32m+[m
+   return ([m
+[31m-    <BrowserRouter>[m
+[31m-      <FlashMessage />[m
+[31m-      <Header />[m
+[31m-      <Switch>[m
+[31m-        <Route path="/" exact>[m
+[31m-          {isLogin ? <Home /> : <HomeGuest />}[m
+[31m-        </Route>[m
+[31m-        <Route path="/post/:id">[m
+[31m-          <ViewSinglePost />[m
+[31m-        </Route>[m
+[31m-        <Route path="/create-post">[m
+[31m-          <CreatePost />[m
+[31m-        </Route>[m
+[31m-        <Route path="/about-us" exact>[m
+[31m-          <About />[m
+[31m-        </Route>[m
+[31m-        <Route path="/terms" exact>[m
+[31m-          <Terms />[m
+[31m-        </Route>[m
+[31m-      </Switch>[m
+[31m-      <Footer />[m
+[31m-    </BrowserRouter>[m
+[32m+[m[32m    <ExampleContext.Provider value={{ addFlashMessage, setLoggedIn }}>[m
+[32m+[m[32m      <BrowserRouter>[m
+[32m+[m[32m        <FlashMessages messages={flashMessages} />[m
+[32m+[m[32m        <Header loggedIn={loggedIn} />[m
+[32m+[m[32m        <Switch>[m
+[32m+[m[32m          <Route path="/" exact>[m
+[32m+[m[32m            {loggedIn ? <Home /> : <HomeGuest />}[m
+[32m+[m[32m          </Route>[m
+[32m+[m[32m          <Route path="/post/:id">[m
+[32m+[m[32m            <ViewSinglePost />[m
+[32m+[m[32m          </Route>[m
+[32m+[m[32m          <Route path="/create-post">[m
+[32m+[m[32m            <CreatePost />[m
+[32m+[m[32m          </Route>[m
+[32m+[m[32m          <Route path="/about-us">[m
+[32m+[m[32m            <About />[m
+[32m+[m[32m          </Route>[m
+[32m+[m[32m          <Route path="/terms">[m
+[32m+[m[32m            <Terms />[m
+[32m+[m[32m          </Route>[m
+[32m+[m[32m        </Switch>[m
+[32m+[m[32m        <Footer />[m
+[32m+[m[32m      </BrowserRouter>[m
+[32m+[m[32m    </ExampleContext.Provider>[m
+   )[m
+ }[m
+ [m
+[31m-ReactDOM.render([m
+[31m-  <ExampleContextProvider>[m
+[31m-    <Main />[m
+[31m-  </ExampleContextProvider>,[m
+[31m-  document.querySelector("#app")[m
+[31m-)[m
+[31m-/* if (module.hot) {[m
+[32m+[m[32mReactDOM.render(<Main />, document.querySelector("#app"))[m
+[32m+[m
+[32m+[m[32mif (module.hot) {[m
+   module.hot.accept()[m
+[31m-} */[m
+[32m+[m[32m}[m
+[1mdiff --git a/app/components/CreatePost.js b/app/components/CreatePost.js[m
+[1mindex 853bb1e..a5dcc5b 100644[m
+[1m--- a/app/components/CreatePost.js[m
+[1m+++ b/app/components/CreatePost.js[m
+[36m@@ -1,33 +1,34 @@[m
+[31m-import React, { useState, useContext } from "react"[m
+[32m+[m[32mimport React, { useEffect, useState, useContext } from "react"[m
+ import Page from "./Page"[m
+ import Axios from "axios"[m
+ import { withRouter } from "react-router-dom"[m
+[31m-import { ExampleContext } from "./ExampleContext"[m
+[32m+[m[32mimport ExampleContext from "../../ExampleContext"[m
+[32m+[m
+ function CreatePost(props) {[m
+[31m-  const exampleContext = useContext(ExampleContext)[m
+   const [title, setTitle] = useState()[m
+   const [body, setBody] = useState()[m
+[31m-  async function submitHandler(e) {[m
+[32m+[m[32m  const { addFlashMessage } = useContext(ExampleContext)[m
+[32m+[m
+[32m+[m[32m  async function handleSubmit(e) {[m
+     e.preventDefault()[m
+[31m-    await Axios.post("/create-post", {[m
+[31m-      title,[m
+[31m-      body,[m
+[31m-      token: localStorage.getItem("complexappToken")[m
+[31m-    })[m
+[31m-      .then(res => {[m
+[31m-        props.history.push(`/post/${res.data}`)[m
+[31m-        console.log("Post created successfully", res)[m
+[31m-        exampleContext.addFlashMessage([m
+[31m-          "You have successfully created your post!"[m
+[31m-        )[m
+[31m-      })[m
+[31m-      .catch(error => {[m
+[31m-        console.log(error)[m
+[32m+[m[32m    try {[m
+[32m+[m[32m      const response = await Axios.post("/create-post", {[m
+[32m+[m[32m        title,[m
+[32m+[m[32m        body,[m
+[32m+[m[32m        token: localStorage.getItem("complexappToken")[m
+       })[m
+[32m+[m[32m      // Redirect to new post url[m
+[32m+[m[32m      addFlashMessage("Congrats, you successfuly created a post!")[m
+[32m+[m[32m      props.history.push(`/post/${response.data}`)[m
+[32m+[m[32m      console.log("New post was created.")[m
+[32m+[m[32m    } catch (e) {[m
+[32m+[m[32m      console.log("There was a problem.")[m
+[32m+[m[32m    }[m
+   }[m
+[32m+[m
+   return ([m
+     <Page title="Create New Post">[m
+[31m-      <form onSubmit={submitHandler}>[m
+[32m+[m[32m      <form onSubmit={handleSubmit}>[m
+         <div className="form-group">[m
+           <label htmlFor="post-title" className="text-muted mb-1">[m
+             <small>Title</small>[m
+[1mdiff --git a/app/components/ExampleContext.js b/app/components/ExampleContext.js[m
+[1mdeleted file mode 100644[m
+[1mindex b9a4aaa..0000000[m
+[1m--- a/app/components/ExampleContext.js[m
+[1m+++ /dev/null[m
+[36m@@ -1,74 +0,0 @@[m
+[31m-import React, { useReducer } from "react"[m
+[31m-import Axios from "axios"[m
+[31m-export const ExampleContext = React.createContext({[m
+[31m-  FlashMessage: [],[m
+[31m-  addFlashMessage: () => {},[m
+[31m-  isLogin: false,[m
+[31m-  setLoggedIn: function () {},[m
+[31m-  setLoggedOut: () => {}[m
+[31m-})[m
+[31m-[m
+[31m-function ExampleContextProvider(props) {[m
+[31m-  const initialState = {[m
+[31m-    loggedIn: Boolean(localStorage.getItem("complexappToken")),[m
+[31m-    FlashMessages: [][m
+[31m-  }[m
+[31m-  const ourReducer = (state, action) => {[m
+[31m-    switch (action.type) {[m
+[31m-      case "LOGIN":[m
+[31m-        return { ...state, loggedIn: true }[m
+[31m-      case "LOGOUT":[m
+[31m-        return { ...state, loggedIn: false }[m
+[31m-      case "FLASH_MESSAGES":[m
+[31m-        return { ...state, FlashMessages: FlashMessages.concat(action.value) }[m
+[31m-    }[m
+[31m-  }[m
+[31m-  const [state, dispatch] = useReducer(ourReducer, initialState)[m
+[31m-[m
+[31m-  const addFlashMessages = props => {[m
+[31m-    dispatch({ type: "FLASH_MESSAGES", value: props })[m
+[31m-    /* setFlashMessages(prev => prev.concat(props)) */[m
+[31m-  }[m
+[31m-  async function handlerLogin(username, password) {[m
+[31m-    await Axios.post("/login", { username, password })[m
+[31m-      .then(res => {[m
+[31m-        if (res.data) {[m
+[31m-          console.log(res.data)[m
+[31m-          localStorage.setItem("complexappToken", res.data.token)[m
+[31m-          localStorage.setItem("complexappAvatar", res.data.avatar)[m
+[31m-          localStorage.setItem("complexappUsername", res.data.username)[m
+[31m-          dispatch({ type: "LOGIN" })[m
+[31m-          /* setLogIn(true) */[m
+[31m-        } else {[m
+[31m-          console.log("Incorrect username/password!")[m
+[31m-        }[m
+[31m-      })[m
+[31m-      .catch(error => {[m
+[31m-        console.log("error result", error.response.data)[m
+[31m-      })[m
+[31m-  }[m
+[31m-[m
+[31m-  const handleLogOut = () => {[m
+[31m-    dispatch({ type: "LOGOUT" })[m
+[31m-    /* setLogIn(false) */[m
+[31m-    localStorage.removeItem("complexappToken")[m
+[31m-    localStorage.removeItem("complexappAvatar")[m
+[31m-    localStorage.removeItem("complexappUsername")[m
+[31m-  }[m
+[31m-[m
+[31m-  return ([m
+[31m-    <ExampleContext.Provider[m
+[31m-      value={{[m
+[31m-        FlashMessage: state.FlashMessages,[m
+[31m-        addFlashMessage: addFlashMessages,[m
+[31m-        isLogin: state.loggedIn,[m
+[31m-        setLoggedIn: handlerLogin,[m
+[31m-        setLoggedOut: handleLogOut[m
+[31m-      }}[m
+[31m-    >[m
+[31m-      {props.children}[m
+[31m-    </ExampleContext.Provider>[m
+[31m-  )[m
+[31m-}[m
+[31m-[m
+[31m-export default ExampleContextProvider[m
+[1mdiff --git a/app/components/FlashMessages.js b/app/components/FlashMessages.js[m
+[1mindex 81e1c6d..7e22c19 100644[m
+[1m--- a/app/components/FlashMessages.js[m
+[1m+++ b/app/components/FlashMessages.js[m
+[36m@@ -1,17 +1,11 @@[m
+[31m-import React, { useContext } from "react"[m
+[31m-import { ExampleContext } from "./ExampleContext"[m
+[31m-[m
+[31m-function FlashMessages() {[m
+[31m-  const FlashMessages = useContext(ExampleContext).FlashMessage[m
+[32m+[m[32mimport React, { useEffect } from "react"[m
+ [m
+[32m+[m[32mfunction FlashMessages(props) {[m
+   return ([m
+     <div className="floating-alerts">[m
+[31m-      {FlashMessages.map((msg, index) => {[m
+[32m+[m[32m      {props.messages.map((msg, index) => {[m
+         return ([m
+[31m-          <div[m
+[31m-            key={index}[m
+[31m-            className="alert alert-success text-center floating-alert shadow-sm"[m
+[31m-          >[m
+[32m+[m[32m          <div key={index} className="alert alert-success text-center floating-alert shadow-sm">[m
+             {msg}[m
+           </div>[m
+         )[m
+[1mdiff --git a/app/components/Header.js b/app/components/Header.js[m
+[1mindex 53f0def..6cec8c5 100644[m
+[1m--- a/app/components/Header.js[m
+[1m+++ b/app/components/Header.js[m
+[36m@@ -1,11 +1,9 @@[m
+[31m-import React, { useContext } from "react"[m
+[32m+[m[32mimport React, { useState } from "react"[m
+ import { Link } from "react-router-dom"[m
+ import HeaderLoggedOut from "./HeaderLoggedOut"[m
+ import HeaderLoggedIn from "./HeaderLoggedIn"[m
+[31m-import { ExampleContext } from "./ExampleContext"[m
+[31m-function Header() {[m
+[31m-  console.log("Header render!")[m
+[31m-  const { isLogin } = useContext(ExampleContext)[m
+[32m+[m
+[32m+[m[32mfunction Header(props) {[m
+   return ([m
+     <header className="header-bar bg-primary mb-3">[m
+       <div className="container d-flex flex-column flex-md-row align-items-center p-3">[m
+[36m@@ -14,7 +12,7 @@[m [mfunction Header() {[m
+             ComplexApp[m
+           </Link>[m
+         </h4>[m
+[31m-        {isLogin ? <HeaderLoggedIn /> : <HeaderLoggedOut />}[m
+[32m+[m[32m        {props.loggedIn ? <HeaderLoggedIn /> : <HeaderLoggedOut />}[m
+       </div>[m
+     </header>[m
+   )[m
+[1mdiff --git a/app/components/HeaderLoggedIn.js b/app/components/HeaderLoggedIn.js[m
+[1mindex 4674ff6..a424c83 100644[m
+[1m--- a/app/components/HeaderLoggedIn.js[m
+[1m+++ b/app/components/HeaderLoggedIn.js[m
+[36m@@ -1,37 +1,39 @@[m
+ import React, { useEffect, useContext } from "react"[m
+[31m-import { ExampleContext } from "./ExampleContext"[m
+ import { Link } from "react-router-dom"[m
+[32m+[m[32mimport ExampleContext from "../../ExampleContext"[m
+ [m
+ function HeaderLoggedIn(props) {[m
+[31m-  console.log("HeaderLoggedIn render!")[m
+[31m-  const { setLoggedOut } = useContext(ExampleContext)[m
+[31m-  function handleLogOut() {[m
+[31m-    setLoggedOut()[m
+[32m+[m[32m  const { setLoggedIn } = useContext(ExampleContext)[m
+[32m+[m
+[32m+[m[32m  function handleLogout() {[m
+[32m+[m[32m    setLoggedIn(false)[m
+[32m+[m[32m    localStorage.removeItem("complexappToken")[m
+[32m+[m[32m    localStorage.removeItem("complexappUsername")[m
+[32m+[m[32m    localStorage.removeItem("complexappAvatar")[m
+   }[m
+[32m+[m
+   return ([m
+[31m-    <>[m
+[31m-      <div className="flex-row my-3 my-md-0">[m
+[31m-        <a href="#" className="text-white mr-2 header-search-icon">[m
+[31m-          <i className="fas fa-search"></i>[m
+[31m-        </a>[m
+[31m-        <span className="mr-2 header-chat-icon text-white">[m
+[31m-          <i className="fas fa-comment"></i>[m
+[31m-          <span className="chat-count-badge text-white"> </span>[m
+[31m-        </span>[m
+[31m-        <a href="#" className="mr-2">[m
+[31m-          <img[m
+[31m-            className="small-header-avatar"[m
+[31m-            src={localStorage.getItem("complexappAvatar")}[m
+[31m-          />[m
+[31m-        </a>[m
+[31m-        <Link className="btn btn-sm btn-success mr-2" to="/create-post">[m
+[31m-          Create Post[m
+[31m-        </Link>[m
+[31m-        <button onClick={handleLogOut} className="btn btn-sm btn-secondary">[m
+[31m-          Sign Out[m
+[31m-        </button>[m
+[31m-      </div>[m
+[31m-    </>[m
+[32m+[m[32m    <div className="flex-row my-3 my-md-0">[m
+[32m+[m[32m      <a href="#" className="text-white mr-2 header-search-icon">[m
+[32m+[m[32m        <i className="fas fa-search"></i>[m
+[32m+[m[32m      </a>[m
+[32m+[m[32m      <span className="mr-2 header-chat-icon text-white">[m
+[32m+[m[32m        <i className="fas fa-comment"></i>[m
+[32m+[m[32m        <span className="chat-count-badge text-white"> </span>[m
+[32m+[m[32m      </span>[m
+[32m+[m[32m      <a href="#" className="mr-2">[m
+[32m+[m[32m        <img[m
+[32m+[m[32m          className="small-header-avatar"[m
+[32m+[m[32m          src={localStorage.getItem("complexappAvatar")}[m
+[32m+[m[32m        />[m
+[32m+[m[32m      </a>[m
+[32m+[m[32m      <Link className="btn btn-sm btn-success mr-2" to="/create-post">[m
+[32m+[m[32m        Create Post[m
+[32m+[m[32m      </Link>[m
+[32m+[m[32m      <button onClick={handleLogout} className="btn btn-sm btn-secondary">[m
+[32m+[m[32m        Sign Out[m
+[32m+[m[32m      </button>[m
+[32m+[m[32m    </div>[m
+   )[m
+ }[m
+ [m
+[1mdiff --git a/app/components/HeaderLoggedOut.js b/app/components/HeaderLoggedOut.js[m
+[1mindex a18b64b..d0224df 100644[m
+[1m--- a/app/components/HeaderLoggedOut.js[m
+[1m+++ b/app/components/HeaderLoggedOut.js[m
+[36m@@ -1,44 +1,56 @@[m
+[31m-import React, { useState, useContext } from "react"[m
+[31m-import { ExampleContext } from "./ExampleContext"[m
+[32m+[m[32mimport React, { useEffect, useState, useContext } from "react"[m
+[32m+[m[32mimport Axios from "axios"[m
+[32m+[m[32mimport ExampleContext from "../../ExampleContext"[m
+ [m
+ function HeaderLoggedOut(props) {[m
+[31m-  console.log("HeaderLoggedOut render!")[m
+   const { setLoggedIn } = useContext(ExampleContext)[m
+   const [username, setUsername] = useState()[m
+   const [password, setPassword] = useState()[m
+[32m+[m
+   async function handleSubmit(e) {[m
+     e.preventDefault()[m
+[31m-    setLoggedIn(username, password)[m
+[32m+[m[32m    try {[m
+[32m+[m[32m      const response = await Axios.post("/login", { username, password })[m
+[32m+[m[32m      if (response.data) {[m
+[32m+[m[32m        localStorage.setItem("complexappToken", response.data.token)[m
+[32m+[m[32m        localStorage.setItem("complexappUsername", response.data.username)[m
+[32m+[m[32m        localStorage.setItem("complexappAvatar", response.data.avatar)[m
+[32m+[m[32m        setLoggedIn(true)[m
+[32m+[m[32m      } else {[m
+[32m+[m[32m        console.log("Incorrect username / password.")[m
+[32m+[m[32m      }[m
+[32m+[m[32m    } catch (e) {[m
+[32m+[m[32m      console.log("There was a problem.")[m
+[32m+[m[32m    }[m
+   }[m
+[32m+[m
+   return ([m
+[31m-    <>[m
+[31m-      <form onSubmit={handleSubmit} className="mb-0 pt-2 pt-md-0">[m
+[31m-        <div className="row align-items-center">[m
+[31m-          <div className="col-md mr-0 pr-md-0 mb-3 mb-md-0">[m
+[31m-            <input[m
+[31m-              onChange={e => setUsername(e.target.value)}[m
+[31m-              name="username"[m
+[31m-              className="form-control form-control-sm input-dark"[m
+[31m-              type="text"[m
+[31m-              placeholder="Username"[m
+[31m-              autoComplete="off"[m
+[31m-            />[m
+[31m-          </div>[m
+[31m-          <div className="col-md mr-0 pr-md-0 mb-3 mb-md-0">[m
+[31m-            <input[m
+[31m-              onChange={e => setPassword(e.target.value)}[m
+[31m-              name="password"[m
+[31m-              className="form-control form-control-sm input-dark"[m
+[31m-              type="password"[m
+[31m-              placeholder="Password"[m
+[31m-            />[m
+[31m-          </div>[m
+[31m-          <div className="col-md-auto">[m
+[31m-            <button className="btn btn-success btn-sm">Sign In</button>[m
+[31m-          </div>[m
+[32m+[m[32m    <form onSubmit={handleSubmit} className="mb-0 pt-2 pt-md-0">[m
+[32m+[m[32m      <div className="row align-items-center">[m
+[32m+[m[32m        <div className="col-md mr-0 pr-md-0 mb-3 mb-md-0">[m
+[32m+[m[32m          <input[m
+[32m+[m[32m            onChange={e => setUsername(e.target.value)}[m
+[32m+[m[32m            name="username"[m
+[32m+[m[32m            className="form-control form-control-sm input-dark"[m
+[32m+[m[32m            type="text"[m
+[32m+[m[32m            placeholder="Username"[m
+[32m+[m[32m            autoComplete="off"[m
+[32m+[m[32m          />[m
+[32m+[m[32m        </div>[m
+[32m+[m[32m        <div className="col-md mr-0 pr-md-0 mb-3 mb-md-0">[m
+[32m+[m[32m          <input[m
+[32m+[m[32m            onChange={e => setPassword(e.target.value)}[m
+[32m+[m[32m            name="password"[m
+[32m+[m[32m            className="form-control form-control-sm input-dark"[m
+[32m+[m[32m            type="password"[m
+[32m+[m[32m            placeholder="Password"[m
+[32m+[m[32m          />[m
+[32m+[m[32m        </div>[m
+[32m+[m[32m        <div className="col-md-auto">[m
+[32m+[m[32m          <button className="btn btn-success btn-sm">Sign In</button>[m
+         </div>[m
+[31m-      </form>[m
+[31m-    </>[m
+[32m+[m[32m      </div>[m
+[32m+[m[32m    </form>[m
+   )[m
+ }[m
+ [m
+[1mdiff --git a/app/components/Home.js b/app/components/Home.js[m
+[1mindex 59fbefc..e891dad 100644[m
+[1m--- a/app/components/Home.js[m
+[1m+++ b/app/components/Home.js[m
+[36m@@ -1,21 +1,15 @@[m
+[31m-import React from "react"[m
+[32m+[m[32mimport React, { useEffect } from "react"[m
+ import Page from "./Page"[m
+[32m+[m
+ function Home() {[m
+[31m-  console.log("Feed render!")[m
+   return ([m
+     <Page title="Your Feed">[m
+       <h2 className="text-center">[m
+[31m-        Hello <strong>{localStorage.getItem("complexappUsername")}</strong>,[m
+[31m-        your feed is empty.[m
+[32m+[m[32m        Hello <strong>{localStorage.getItem("complexappUsername")}</strong>, your feed is empty.[m
+       </h2>[m
+[31m-      <p className="lead text-muted text-center">[m
+[31m-        Your feed displays the latest posts from the people you follow. If you[m
+[31m-        don&rsquo;t have any friends to follow that&rsquo;s okay; you can use[m
+[31m-        the &ldquo;Search&rdquo; feature in the top menu bar to find content[m
+[31m-        written by people with similar interests and then follow them.[m
+[31m-      </p>[m
+[32m+[m[32m      <p className="lead text-muted text-center">Your feed displays the latest posts from the people you follow. If you don&rsquo;t have any friends to follow that&rsquo;s okay; you can use the &ldquo;Search&rdquo; feature in the top menu bar to find content written by people with similar interests and then follow them.</p>[m
+     </Page>[m
+   )[m
+ }[m
+ [m
+[31m-export default Home[m
+[32m+[m[32mexport default Home[m
+\ No newline at end of file[m
+[1mdiff --git a/app/components/HomeGuest.js b/app/components/HomeGuest.js[m
+[1mindex 8317102..a5d172c 100644[m
+[1m--- a/app/components/HomeGuest.js[m
+[1m+++ b/app/components/HomeGuest.js[m
+[36m@@ -1,33 +1,28 @@[m
+ import React, { useState } from "react"[m
+ import Page from "./Page"[m
+[31m-import axios from "axios"[m
+[32m+[m[32mimport Axios from "axios"[m
+[32m+[m
+ function HomeGuest() {[m
+[31m-  console.log("Home Guest render!")[m
+   const [username, setUsername] = useState()[m
+   const [email, setEmail] = useState()[m
+   const [password, setPassword] = useState()[m
+[32m+[m
+   async function handleSubmit(e) {[m
+     e.preventDefault()[m
+[31m-    await axios[m
+[31m-      .post("/register", { username, email, password })[m
+[31m-      .then(res => {[m
+[31m-        console.log("Then result", res)[m
+[31m-      })[m
+[31m-      .catch(error => {[m
+[31m-        console.log("error result", error.response.data)[m
+[31m-      })[m
+[32m+[m[32m    try {[m
+[32m+[m[32m      await Axios.post("/register", { username, email, password })[m
+[32m+[m[32m      console.log("User was successfully created.")[m
+[32m+[m[32m    } catch (e) {[m
+[32m+[m[32m      console.log("There was an error.")[m
+[32m+[m[32m    }[m
+   }[m
+[32m+[m
+   return ([m
+[31m-    <Page wide={true} title="Welcome!">[m
+[32m+[m[32m    <Page title="Welcome!" wide={true}>[m
+       <div className="row align-items-center">[m
+         <div className="col-lg-7 py-3 py-md-5">[m
+           <h1 className="display-3">Remember Writing?</h1>[m
+[31m-          <p className="lead text-muted">[m
+[31m-            Are you sick of short tweets and impersonal &ldquo;shared&rdquo;[m
+[31m-            posts that are reminiscent of the late 90&rsquo;s email forwards? We[m
+[31m-            believe getting back to actually writing is the key to enjoying the[m
+[31m-            internet again.[m
+[31m-          </p>[m
+[32m+[m[32m          <p className="lead text-muted">Are you sick of short tweets and impersonal &ldquo;shared&rdquo; posts that are reminiscent of the late 90&rsquo;s email forwards? We believe getting back to actually writing is the key to enjoying t

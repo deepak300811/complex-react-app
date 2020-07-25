@@ -2,32 +2,38 @@ import React, { useState, useContext } from "react"
 import Page from "./Page"
 import Axios from "axios"
 import { withRouter } from "react-router-dom"
-import { ExampleContext } from "./ExampleContext"
+import DispatchContext from "../DispatchContext"
+import StateContext from "../StateContext"
+
 function CreatePost(props) {
-  const exampleContext = useContext(ExampleContext)
   const [title, setTitle] = useState()
   const [body, setBody] = useState()
-  async function submitHandler(e) {
+  const appDispatch = useContext(DispatchContext)
+  const appState = useContext(StateContext)
+
+  async function handleSubmit(e) {
     e.preventDefault()
-    await Axios.post("/create-post", {
-      title,
-      body,
-      token: localStorage.getItem("complexappToken")
-    })
-      .then(res => {
-        props.history.push(`/post/${res.data}`)
-        console.log("Post created successfully", res)
-        exampleContext.addFlashMessage(
-          "You have successfully created your post!"
-        )
+    try {
+      const response = await Axios.post("/create-post", {
+        title,
+        body,
+        token: appState.user.token
       })
-      .catch(error => {
-        console.log(error)
+      // Redirect to new post url
+      appDispatch({
+        type: "FLASH_MESSAGES",
+        value: "Congrats, you successfuly created a post!"
       })
+      props.history.push(`/post/${response.data}`)
+      console.log("New post was created.")
+    } catch (e) {
+      console.log("There was a problem.")
+    }
   }
+
   return (
     <Page title="Create New Post">
-      <form onSubmit={submitHandler}>
+      <form onSubmit={handleSubmit}>
         <div className="form-group">
           <label htmlFor="post-title" className="text-muted mb-1">
             <small>Title</small>
